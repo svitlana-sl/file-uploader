@@ -23,15 +23,6 @@ app.use(express.json());
 app.use(express.static("src/public"));
 app.use("/uploads", express.static("uploads"));
 
-// const storage = multer.diskStorage({
-//   destination: "./uploads",
-//   filename: function (req, file, cb) {
-//     const newName =
-//       file.fieldname + "-" + Date.now() + path.extname(file.originalname);
-//     cb(null, newName);
-//   },
-// });
-
 cloudinary.config({
   cloud_name: CLOUDINARY_CLOUD_NAME,
   api_key: CLOUDINARY_API_KEY,
@@ -45,18 +36,20 @@ const storage = new CloudinaryStorage({
   } as any,
 });
 
-const upload = multer({ storage: storage, limits: { fileSize: 3000000 } });
+const upload = multer({ storage: storage });
 // Routes
 app.post("/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
     res.status(400).send("No file uploaded.");
     return;
   }
-  // const fileName = req.file.filename + "-" + Date.now() + path.extname(req.file.originalname);
-  const imageUrl = `/uploads/${req.file.filename}`;
+
+  console.log(req.file);
+
   res.status(200).send(`
-    <h1>Image uploaded successfully!</h1> 
-    <img src="http://localhost:3000${imageUrl}" width ="500"/>`);
+    <h1>Upload success</h1>
+    <img src="${req.file.path}" width="500" />
+  `);
 });
 
 app.get("/", (req, res) => {
