@@ -33,6 +33,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "uploads",
+    allowedFormats: ["jpg", "png", "jpeg", "webp"],
   } as any,
 });
 
@@ -45,10 +46,13 @@ app.post("/upload", upload.single("image"), (req, res) => {
   }
 
   console.log(req.file);
+  const base_url = "https://res.cloudinary.com/dmcvxqelq/image/upload/";
+  const trans = "c_thumb,g_face,h_200,w_200/r_max/f_auto/";
+  const end = req.file.filename + path.extname(req.file.originalname);
 
   res.status(200).send(`
     <h1>Upload success</h1>
-    <img src="${req.file.path}" width="500" />
+    <img src="${base_url}${trans}${end}" />
   `);
 });
 
