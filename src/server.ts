@@ -6,6 +6,9 @@ import { PORT } from "./utils/envs";
 import multer from "multer";
 import { log } from "console";
 import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+
 // Variables
 const app = express();
 
@@ -15,14 +18,22 @@ app.use(express.json());
 app.use(express.static("src/public"));
 app.use("/uploads", express.static("uploads"));
 
-const storage = multer.diskStorage({
-  destination: "./uploads",
-  filename: function (req, file, cb) {
-    const newName =
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname);
-    cb(null, newName);
-  },
+// const storage = multer.diskStorage({
+//   destination: "./uploads",
+//   filename: function (req, file, cb) {
+//     const newName =
+//       file.fieldname + "-" + Date.now() + path.extname(file.originalname);
+//     cb(null, newName);
+//   },
+// });
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "uploads",
+  } as any,
 });
+
 const upload = multer({ storage: storage, limits: { fileSize: 3000000 } });
 // Routes
 app.post("/upload", upload.single("image"), (req, res) => {
