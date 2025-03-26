@@ -2,7 +2,12 @@
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import chalk from "chalk";
-import { PORT } from "./utils/envs";
+import {
+  PORT,
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET,
+} from "./utils/envs";
 import multer from "multer";
 import { log } from "console";
 import path from "path";
@@ -26,6 +31,12 @@ app.use("/uploads", express.static("uploads"));
 //     cb(null, newName);
 //   },
 // });
+
+cloudinary.config({
+  cloud_name: CLOUDINARY_CLOUD_NAME,
+  api_key: CLOUDINARY_API_KEY,
+  api_secret: CLOUDINARY_API_SECRET,
+});
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
